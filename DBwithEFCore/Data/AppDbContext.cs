@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DBwithEFCore.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DBwithEFCore.Data
 {
@@ -8,5 +9,8 @@ namespace DBwithEFCore.Data
         {
             
         }
+
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Language> Languages { get; set; }
     }
 }
