@@ -45,16 +45,27 @@ namespace DBwithEFCore.Controllers
         }
 
 
-        [HttpGet("{name}")]
-        public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name )
-        {
-            var currencies = await _context.Currencies.FirstAsync(x => x.Title == name); // Getting  curriences using LINQ based on name
-            //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name);
-            //var currencies = await _context.Currencies.SingleAsync(x => x.Title == name);
-            //var currencies = await _context.Currencies.SingleOrDefaultAsync(x => x.Title == name);
-            //var currencies = await _context.Currencies.Where(x => x.Title == name).SingleOrDefaultAsync();  // work as same but not good in performance beacuse in this we visit whole records and then return
-                                                                                                              // but in above case we return from where or condition meet first time hence better performance.
+        //[HttpGet("{name}")]
+        //public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name )
+        //{
+        //    var currencies = await _context.Currencies.FirstAsync(x => x.Title == name); // Getting  curriences using LINQ based on name
+        //    //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name);
+        //    //var currencies = await _context.Currencies.SingleAsync(x => x.Title == name);
+        //    //var currencies = await _context.Currencies.SingleOrDefaultAsync(x => x.Title == name);
+        //    //var currencies = await _context.Currencies.Where(x => x.Title == name).SingleOrDefaultAsync();  // work as same but not good in performance beacuse in this we visit whole records and then return
+        //                                                                                                      // but in above case we return from where or condition meet first time hence better performance.
 
+        //    return Ok(currencies);
+        //}
+
+
+        //[HttpGet("{name}/{description}")] for this we use [FromRoute] string description
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name, [FromQuery] string? description)
+        {
+            //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && x.Description == description); // Getting  curriences using LINQ based on multiple conditions
+            //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && ( string.IsNullOrEmpty(description) || x.Description == description));
+            var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // if description is null then based on name record fetched
             return Ok(currencies);
         }
 
