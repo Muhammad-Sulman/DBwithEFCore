@@ -71,11 +71,21 @@ namespace DBwithEFCore.Controllers
 
 
 
-        [HttpGet("{name}")]
-        public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name, [FromQuery] string? description)
+        //[HttpGet("{name}")]
+        //public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name, [FromQuery] string? description)
+        //{
+        //    var currencies = await _context.Currencies.Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)).ToListAsync(); // getting multiple records based on conditions
+        //    //var currencies =  _context.Currencies.ToList().Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // all record fetched first then then filtered. performance wise bad method in above case we filter record on database side and only get required records.
+        //    return Ok(currencies);
+        //}
+        
+        
+        [HttpPost("all")]
+        public async Task<IActionResult> GetAllCurrenciesAsync([FromBody] List<int> ids)
         {
-            var currencies = await _context.Currencies.Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)).ToListAsync(); // getting multiple records based on conditions
-            //var currencies =  _context.Currencies.ToList().Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // all record fetched first then then filtered. performance wise bad method in above case we filter record on database side and only get required records.
+            // var ids = new List<int> {1, 2, 4}; get record based on ids
+            var currencies = await _context.Currencies.Where(x => ids.Contains(x.Id)).ToListAsync(); // getting record dynamically based on list comimg from body of post
+           
             return Ok(currencies);
         }
 
