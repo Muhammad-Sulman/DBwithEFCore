@@ -1,4 +1,5 @@
 ﻿using DBwithEFCore.Data;
+using DBwithEFCore.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,13 +28,13 @@ namespace DBwithEFCore.Controllers
 
 
         // Asynchronous call best method to call api becuase increses performance
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllCurrencies()
-        {
-            //var currencies = await _context.Currencies.ToListAsync(); // Getting all curriences using LINQ
-            var currencies = await (from cur in _context.Currencies select cur).ToListAsync(); // LINQ like SQL functions same as above line
-            return Ok(currencies);
-        }
+        //[HttpGet("")]
+        //public async Task<IActionResult> GetAllCurrencies()
+        //{
+        //    //var currencies = await _context.Currencies.ToListAsync(); // Getting all curriences using LINQ
+        //    var currencies = await (from cur in _context.Currencies select cur).ToListAsync(); // LINQ like SQL functions same as above line
+        //    return Ok(currencies);
+        //}
 
 
         [HttpGet("{id:int}")] // mentioned int to avoid ambguity with name of below method other we face error 
@@ -78,14 +79,44 @@ namespace DBwithEFCore.Controllers
         //    //var currencies =  _context.Currencies.ToList().Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // all record fetched first then then filtered. performance wise bad method in above case we filter record on database side and only get required records.
         //    return Ok(currencies);
         //}
-        
-        
-        [HttpPost("all")]
-        public async Task<IActionResult> GetAllCurrenciesAsync([FromBody] List<int> ids)
+
+
+        //[HttpPost("all")]
+        //public async Task<IActionResult> GetAllCurrenciesAsync([FromBody] List<int> ids)
+        //{
+        //    // var ids = new List<int> {1, 2, 4}; get record based on ids
+        //    var currencies = await _context.Currencies.Where(x => ids.Contains(x.Id)).ToListAsync(); // getting record dynamically based on list comimg from body of post
+
+        //    return Ok(currencies);
+        //}
+
+
+
+        [HttpGet("")]
+        public async Task<IActionResult> GetAllCurrencies()
         {
-            // var ids = new List<int> {1, 2, 4}; get record based on ids
-            var currencies = await _context.Currencies.Where(x => ids.Contains(x.Id)).ToListAsync(); // getting record dynamically based on list comimg from body of post
-           
+            //var currencies = await _context.Currencies
+            //    .Select(x => new Currency()                 // getting on selected columns
+            //    {
+            //        Id = x.Id,
+            //        Title = x.Title,
+            //    })
+            //    .ToListAsync(); 
+
+            //var currencies = await _context.Currencies
+            //    .Select(x => new                         // we can also use anonymous object
+            //    {
+            //        CurrentId = x.Id,                    // we can also use our own names
+            //        Title = x.Title,
+            //    })
+            //    .ToListAsync();
+
+
+            var currencies = (from cur in _context.Currencies select new
+            {
+                Id = cur.Id,
+                Title = cur.Title,
+            }).ToList();
             return Ok(currencies);
         }
 
