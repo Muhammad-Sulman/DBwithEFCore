@@ -60,12 +60,22 @@ namespace DBwithEFCore.Controllers
 
 
         //[HttpGet("{name}/{description}")] for this we use [FromRoute] string description
+        //[HttpGet("{name}")]
+        //public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name, [FromQuery] string? description) //? is used to allow null value without it description is required. 
+        //{
+        //    //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && x.Description == description); // Getting  curriences using LINQ based on multiple conditions
+        //    //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && ( string.IsNullOrEmpty(description) || x.Description == description));
+        //    var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // if description is null then based on name record fetched
+        //    return Ok(currencies);
+        //}
+
+
+
         [HttpGet("{name}")]
         public async Task<IActionResult> GetAllCurrenciesAsync([FromRoute] string name, [FromQuery] string? description)
         {
-            //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && x.Description == description); // Getting  curriences using LINQ based on multiple conditions
-            //var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && ( string.IsNullOrEmpty(description) || x.Description == description));
-            var currencies = await _context.Currencies.FirstOrDefaultAsync(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // if description is null then based on name record fetched
+            var currencies = await _context.Currencies.Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)).ToListAsync(); // getting multiple records based on conditions
+            //var currencies =  _context.Currencies.ToList().Where(x => x.Title == name && (string.IsNullOrEmpty(description) || x.Description == description)); // all record fetched first then then filtered. performance wise bad method in above case we filter record on database side and only get required records.
             return Ok(currencies);
         }
 
@@ -73,12 +83,11 @@ namespace DBwithEFCore.Controllers
 }
 
 /*
- * 
- * In LINQ (Language Integrated Query) in C#, the methods `First`, `FirstOrDefault`, `Single`, and `SingleOrDefault` are used to retrieve elements from a collection. While they may seem similar, they have distinct behaviors and use cases. Here's a detailed explanation of each method:
 
----
+ In LINQ (Language Integrated Query) in C#, the methods `First`, `FirstOrDefault`, `Single`, and `SingleOrDefault` are used to retrieve elements from a collection. While they may seem similar, they have distinct behaviors and use cases. Here's a detailed explanation of each method:
 
-### 1. **`First` Method**
+
+ 1. **`First` Method**
 - **Purpose**: Returns the **first element** in a sequence that matches the specified condition (if any). 
 - **Behavior**:
   - If a condition is specified, it finds the first element that matches the condition.
