@@ -11,6 +11,8 @@
 
 
         public int LanguageId { get; set; } // Acts as a foreign key (FK) linking to the Language entity. This defines which language the book is written in.
+        public int? AuthorId { get; set; }  // when adding property later in already existing table in database then set property nullable to add default value in records.
         public Language? Language { get; set; } // A navigation property that enables accessing the related Language entity for the book. It represents the relationship between the book and its language.
+        public Author? Author { get; set; }
     }
 }

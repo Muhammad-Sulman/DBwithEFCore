@@ -12,6 +12,13 @@ namespace DBwithEFCore.Controllers
         [HttpPost("")]
         public async Task<IActionResult> AddNewBook([FromBody] Book model)
         {
+            //var author = new Author() // hard coded data insertion
+            //{
+            //    Name = "author 1",
+            //    Email= "test@gmail.com"
+            //};
+
+            //model.Author = author;
             appDbContext.Books.Add(model);
             await appDbContext.SaveChangesAsync();
             return Ok(model);
