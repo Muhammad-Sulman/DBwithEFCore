@@ -18,13 +18,14 @@ namespace DBwithEFCore.Controllers
         }
 
 
-        //[HttpGet("")]
-        //public IActionResult GetAllCurrencies() 
-        //{
-        //    //var currencies = _context.Currencies.ToList(); // Getting all curriences using LINQ
-        //    var currencies = (from cur in _context.Currencies select cur).ToList(); // LINQ like SQL functions same as above line
-        //    return Ok(currencies);
-        //}
+        [HttpGet("")]
+        public IActionResult GetAllCurrencies()
+        {
+            //var currencies = _context.Currencies.ToList(); // Getting all curriences using LINQ
+            //var currencies = (from cur in _context.Currencies select cur).ToList(); // LINQ like SQL functions same as above line
+            var currencies = _context.Currencies.AsNoTracking().ToList();  // without tracking state of Entity beacuse we only read here no write on database.
+            return Ok(currencies);
+        }
 
 
         // Asynchronous call best method to call api becuase increses performance
@@ -92,33 +93,33 @@ namespace DBwithEFCore.Controllers
 
 
 
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllCurrencies()
-        {
-            //var currencies = await _context.Currencies
-            //    .Select(x => new Currency()                 // getting on selected columns
-            //    {
-            //        Id = x.Id,
-            //        Title = x.Title,
-            //    })
-            //    .ToListAsync(); 
+        //[HttpGet("")]
+        //public async Task<IActionResult> GetAllCurrencies()
+        //{
+        //    //var currencies = await _context.Currencies
+        //    //    .Select(x => new Currency()                 // getting on selected columns
+        //    //    {
+        //    //        Id = x.Id,
+        //    //        Title = x.Title,
+        //    //    })
+        //    //    .ToListAsync(); 
 
-            //var currencies = await _context.Currencies
-            //    .Select(x => new                         // we can also use anonymous object
-            //    {
-            //        CurrentId = x.Id,                    // we can also use our own names
-            //        Title = x.Title,
-            //    })
-            //    .ToListAsync();
+        //    //var currencies = await _context.Currencies
+        //    //    .Select(x => new                         // we can also use anonymous object
+        //    //    {
+        //    //        CurrentId = x.Id,                    // we can also use our own names
+        //    //        Title = x.Title,
+        //    //    })
+        //    //    .ToListAsync();
 
 
-            var currencies = (from cur in _context.Currencies select new
-            {
-                Id = cur.Id,
-                Title = cur.Title,
-            }).ToList();
-            return Ok(currencies);
-        }
+        //    var currencies = (from cur in _context.Currencies select new
+        //    {
+        //        Id = cur.Id,
+        //        Title = cur.Title,
+        //    }).ToList();
+        //    return Ok(currencies);
+        //}
 
     }
 }
