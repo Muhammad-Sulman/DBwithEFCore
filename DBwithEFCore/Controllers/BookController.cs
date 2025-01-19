@@ -2,6 +2,7 @@
 using DBwithEFCore.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DBwithEFCore.Controllers
 {
@@ -63,6 +64,33 @@ namespace DBwithEFCore.Controllers
            // Entity Framework Core to update an entity's state in the Change Tracker because entity framework core work change tracking model it hits database on savechanges method to modified it.
             await appDbContext.SaveChangesAsync();
             return Ok(model);
+        }
+
+
+
+        [HttpPut("bulk")]
+        public async Task<IActionResult> updateBookinbulk() 
+        {
+            //var book = appDbContext.Books.ToList();  // In this way we update in bulk but we have to hit database many times. so performance wise it is not good.
+            //foreach (var item in book)
+            //{
+            //    item.Title = "updated";
+            //}
+
+            //await appDbContext.SaveChangesAsync();
+
+            await appDbContext.Books
+                .Where(x => x.NoOfPages == 140)  // conditional bulk update
+                .ExecuteUpdateAsync(x => x
+                .SetProperty(p => p.Description, "updated in Bulk")  // this replace the existing data
+                .SetProperty(p => p.Title, p => p.Title + " updated new title") // this append the new data with existing data
+                //.SetProperty(p => p.NoOfPages, 100)
+                //.SetProperty(p => p.Description, p =>p.Title + "updated in Bulk") // in this we append the title to description along with new data.
+                );
+
+            // no need of savechanges method here query directly exicuted.
+
+            return Ok();
         }
     }
 }
