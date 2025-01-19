@@ -55,13 +55,13 @@ namespace DBwithEFCore.Controllers
 
 
         [HttpPut("")]
-        public async Task<IActionResult> updateBookwithsinglequery( [FromBody] Book model) 
+        public async Task<IActionResult> updateBookwithsinglequery([FromBody] Book model)
         {
             appDbContext.Books.Update(model); // in this way all required fields of entity must be provided to update the record 
                                               // if there is nullable field then leaving it in update sets its value to null and remove its existing value.
-            
+
             //appDbContext.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified; // work same as above line 
-           // Entity Framework Core to update an entity's state in the Change Tracker because entity framework core work change tracking model it hits database on savechanges method to modified it.
+            // Entity Framework Core to update an entity's state in the Change Tracker because entity framework core work change tracking model it hits database on savechanges method to modified it.
             await appDbContext.SaveChangesAsync();
             return Ok(model);
         }
@@ -69,7 +69,7 @@ namespace DBwithEFCore.Controllers
 
 
         [HttpPut("bulk")]
-        public async Task<IActionResult> updateBookinbulk() 
+        public async Task<IActionResult> updateBookinbulk()
         {
             //var book = appDbContext.Books.ToList();  // In this way we update in bulk but we have to hit database many times. so performance wise it is not good.
             //foreach (var item in book)
@@ -89,6 +89,40 @@ namespace DBwithEFCore.Controllers
                 );
 
             // no need of savechanges method here query directly exicuted.
+
+            return Ok();
+        }
+
+
+
+        [HttpDelete("{bookid}")]
+        public async Task<IActionResult> DeleteBook([FromRoute] int bookid)
+        {
+            //var book = appDbContext.Books.FirstOrDefault(x => x.Id == bookid);  // hits database 2 times 
+            //if (book == null)
+            //{
+            //    return NotFound();
+            //}
+            //appDbContext.Books.Remove(book);
+            //await appDbContext.SaveChangesAsync();
+
+            var book = new Book { Id = bookid };
+            appDbContext.Entry(book).State = EntityState.Deleted;  // hits database 1 time performance wise better.
+            await appDbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+
+        [HttpDelete("bulk")]
+        public async Task<IActionResult> DeleteBookinbulk()
+        {
+            //var books = await appDbContext.Books.Where(x=>x.Id >3).ToArrayAsync(); // hits database 2 times
+            //appDbContext.Books.RemoveRange(books);
+            //await appDbContext.SaveChangesAsync();
+
+            //var books = await appDbContext.Books.Where(x => x.Id > 3).ExecuteDeleteAsync(); // deletes in single database hit
+
+            // we can also delete using EntityState method.
 
             return Ok();
         }
