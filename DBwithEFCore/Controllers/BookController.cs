@@ -164,15 +164,31 @@ namespace DBwithEFCore.Controllers
             //}).ToListAsync();
 
 
-            var books = await appDbContext.Books.Select(x => new   // in this example we getting only requird filds from languages and author table.
-            {
-                x.Id,
-                x.Title,
-                x.Description,
-                x.NoOfPages,
-                lantitle = x.Language.Title,  // if language table have futher navigation we can also get data from that table like (x.language.table.property)
-                authername = x.Author.Name
-            }).ToListAsync();
+            //var books = await appDbContext.Books.Select(x => new   // in this example we getting only requird filds from languages and author table.
+            //{
+            //    x.Id,
+            //    x.Title,
+            //    x.Description,
+            //    x.NoOfPages,
+            //    lantitle = x.Language.Title,  // if language table have futher navigation we can also get data from that table like (x.language.table.property)
+            //    authername = x.Author.Name
+            //}).ToListAsync();
+
+
+
+            //Egar Loading
+            //var books = await appDbContext.Books
+            //    .Include(x => x.Language) // Egar loading gives us depth issue in one to many relationship as language have collection of books property in it so all books are loaded in result.
+            //    .Include(x => x.Author)   // and cross the limit of max output which is 32bit. in (one to one) relation it works good. 
+            //    .ToListAsync();
+
+
+            var books = await appDbContext.Books
+                .Include(x => x.Author)
+                //.Include(x => x.Author.Name)   // throws error we cant get specific property  within include. 
+                //.ThenInclude(x=>x.table3) //using theninclude we can get data from table which is related or included within author.
+                //.ThenInclude(x => x.table4) // agian we can get data from table4 which is within table3 of author. and so on with multiple tables.
+                .ToListAsync();
             return Ok(books);
         }
     }
