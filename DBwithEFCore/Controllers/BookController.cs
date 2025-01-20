@@ -125,6 +125,55 @@ namespace DBwithEFCore.Controllers
             // we can also delete using EntityState method.
 
             return Ok();
+
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Getbooks()
+        {
+            //var books = await appDbContext.Books.Select(x => new   // in this way using anonymous objet we can get book and required fields.
+            //{
+            //    x.Id,
+            //    x.Title,
+            //    x.Description,
+            //    x.NoOfPages,
+
+            //}).ToListAsync();
+
+
+            //var books = await appDbContext.Books.Select(x => new Book()  // in this way using objet we can get book and required fields and other filds with default value if we dont assign thenm in object.
+            //{                                                            // this type safty method used in complex projects. better method than anonymous object
+            //   Id = x.Id,
+            //   Title =  x.Title,
+            //   Description =  x.Description,
+            //   NoOfPages = x.NoOfPages,
+
+            //}).ToListAsync();
+
+
+            // Getting data from multiple tables using navigational properties is best method as compare to other methods. this method is most used in enityframework core
+            //var books = await appDbContext.Books.Select(x => new   // in this example we getting data from 3 tables
+            //{
+            //    x.Id,
+            //    x.Title,
+            //    x.Description,
+            //    x.NoOfPages,
+            //    x.Language, // gives all fields of language
+            //    x.Author,  //  gives all filds of author
+
+            //}).ToListAsync();
+
+
+            var books = await appDbContext.Books.Select(x => new   // in this example we getting only requird filds from languages and author table.
+            {
+                x.Id,
+                x.Title,
+                x.Description,
+                x.NoOfPages,
+                lantitle = x.Language.Title,  // if language table have futher navigation we can also get data from that table like (x.language.table.property)
+                authername = x.Author.Name
+            }).ToListAsync();
+            return Ok(books);
         }
     }
 }
