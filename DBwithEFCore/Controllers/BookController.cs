@@ -183,13 +183,22 @@ namespace DBwithEFCore.Controllers
             //    .ToListAsync();
 
 
-            var books = await appDbContext.Books
-                .Include(x => x.Author)
-                //.Include(x => x.Author.Name)   // throws error we cant get specific property  within include. 
-                //.ThenInclude(x=>x.table3) //using theninclude we can get data from table which is related or included within author.
-                //.ThenInclude(x => x.table4) // agian we can get data from table4 which is within table3 of author. and so on with multiple tables.
-                .ToListAsync();
-            return Ok(books);
+            //var books = await appDbContext.Books
+            //    .Include(x => x.Author)
+            //    //.Include(x => x.Author.Name)   // throws error we cant get specific property  within include. 
+            //    //.ThenInclude(x=>x.table3) //using theninclude we can get data from table which is related or included within author.
+            //    //.ThenInclude(x => x.table4) // agian we can get data from table4 which is within table3 of author. and so on with multiple tables.
+            //    .ToListAsync();
+
+
+
+
+            //Expilcit Loading
+            var book = await appDbContext.Books.FirstAsync();
+                await appDbContext.Entry(book).Reference(x=>x.Author).LoadAsync();   // for one to one relationship like book have only one author (not like=> author write many book) we use reference
+                //await appDbContext.Entry(book).Reference(x => x.Language).LoadAsync(); // throws dept issue due to languages have collection books circular dependency of tables.
+                 //await appDbContext.Entry(book).Reference(x => x.Language).Reference(x => x.Author).LoadAsync(); // throws error we cant use refernce more than one in single statement.
+            return Ok(book);
         }
     }
 }
