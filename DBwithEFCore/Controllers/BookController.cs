@@ -2,7 +2,9 @@
 using DBwithEFCore.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace DBwithEFCore.Controllers
 {
@@ -196,14 +198,28 @@ namespace DBwithEFCore.Controllers
             ////Expilcit Loading
             //var book = await appDbContext.Books.FirstAsync();
             //    await appDbContext.Entry(book).Reference(x=>x.Author).LoadAsync();   // for one to one relationship like book have only one author (not like=> author write many book) we use reference
-                //await appDbContext.Entry(book).Reference(x => x.Language).LoadAsync(); // throws dept issue due to languages have collection books circular dependency of tables.
-                 //await appDbContext.Entry(book).Reference(x => x.Language).Reference(x => x.Author).LoadAsync(); // throws error we cant use refernce more than one in single statement.
-            
+            //await appDbContext.Entry(book).Reference(x => x.Language).LoadAsync(); // throws dept issue due to languages have collection books circular dependency of tables.
+            //await appDbContext.Entry(book).Reference(x => x.Language).Reference(x => x.Author).LoadAsync(); // throws error we cant use refernce more than one in single statement.
+
             // Lazy Loading
-            var book = await appDbContext.Books.FirstAsync();
-            var author = book.Author;
-            
-            return Ok(book);
+            //var book = await appDbContext.Books.FirstAsync();
+            //var author = book.Author;
+
+
+            // using plain sql queries
+
+            var ColumnName = "Title";
+            var ColumnValue = "Updated book";
+
+            var parameter = new SqlParameter("columnvalue", ColumnValue);
+
+            //var books = await appDbContext.Books.FromSql($"select * from Books").ToListAsync();
+            //var books = await appDbContext.Books.FromSql($"select * from Books where {ColumnName} = {ColumnValue}").ToListAsync();
+            //var books = await appDbContext.Books.FromSql($"select * from Books where NoOfPages = {ColumnValue}").ToListAsync();
+            //var books = await appDbContext.Books.FromSql($"select * from Books").Where(x=>x.NoOfPages == 120).ToListAsync();
+
+            var books = await appDbContext.Books.FromSqlRaw($"select * from Books where {ColumnName} = @columnvalue", parameter).ToListAsync();
+            return Ok(books);
         }
     }
 }
