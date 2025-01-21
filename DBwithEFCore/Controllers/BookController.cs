@@ -224,10 +224,17 @@ namespace DBwithEFCore.Controllers
             // Using Stored procedures
             //var books = await appDbContext.Books.FromSql($"EXEC GetBooks").ToListAsync();
             //var books = await appDbContext.Books.FromSql($"EXEC GetBooksById 2").ToListAsync();
-            var id = 2;
-            var parameter = new SqlParameter("@Id", id);
-            var books = await appDbContext.Books.FromSql($"EXEC GetBooksById {parameter}").ToListAsync();
-            
+            //var id = 2;
+            //var parameter = new SqlParameter("@Id", id);
+            //var books = await appDbContext.Books.FromSql($"EXEC GetBooksById {parameter}").ToListAsync();
+
+
+            // Execule SQL query on Database using Entity Framewrk Core
+            var books = await appDbContext.Database.SqlQuery<Book>($"SELECT * FROM Books").ToListAsync();
+            //var books = await appDbContext.Database.SqlQuery<int>($"SELECT Id FROM Books").ToListAsync();
+
+
+            //var books = await appDbContext.Database.ExecuteSqlAsync($"UPDATE Books SET NoOfPages = 150 WHERE Id = 2");
             return Ok(books);
         }
     }
