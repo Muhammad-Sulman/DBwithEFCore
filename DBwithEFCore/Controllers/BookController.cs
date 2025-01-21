@@ -193,11 +193,16 @@ namespace DBwithEFCore.Controllers
 
 
 
-            //Expilcit Loading
-            var book = await appDbContext.Books.FirstAsync();
-                await appDbContext.Entry(book).Reference(x=>x.Author).LoadAsync();   // for one to one relationship like book have only one author (not like=> author write many book) we use reference
+            ////Expilcit Loading
+            //var book = await appDbContext.Books.FirstAsync();
+            //    await appDbContext.Entry(book).Reference(x=>x.Author).LoadAsync();   // for one to one relationship like book have only one author (not like=> author write many book) we use reference
                 //await appDbContext.Entry(book).Reference(x => x.Language).LoadAsync(); // throws dept issue due to languages have collection books circular dependency of tables.
                  //await appDbContext.Entry(book).Reference(x => x.Language).Reference(x => x.Author).LoadAsync(); // throws error we cant use refernce more than one in single statement.
+            
+            // Lazy Loading
+            var book = await appDbContext.Books.FirstAsync();
+            var author = book.Author;
+            
             return Ok(book);
         }
     }

@@ -10,7 +10,7 @@ namespace DBwithEFCore.Data.Entities
         public string Description { get; set; }
 
         // This establishes the one-to-many relationship between Language and Book.
-        public ICollection<Book> Books { get; set; } // A navigation property representing a collection of Book entities associated with this language. This establishes the one-to-many relationship between Language and Book.
+        public virtual ICollection<Book> Books { get; set; } // A navigation property representing a collection of Book entities associated with this language. This establishes the one-to-many relationship between Language and Book.
     }
 }
 
