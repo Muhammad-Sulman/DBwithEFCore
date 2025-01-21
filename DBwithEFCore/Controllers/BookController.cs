@@ -208,17 +208,26 @@ namespace DBwithEFCore.Controllers
 
             // using plain sql queries
 
-            var ColumnName = "Title";
-            var ColumnValue = "Updated book";
+            //var ColumnName = "Title";
+            //var ColumnValue = "Updated book";
 
-            var parameter = new SqlParameter("columnvalue", ColumnValue);
+            //var parameter = new SqlParameter("columnvalue", ColumnValue);
 
-            //var books = await appDbContext.Books.FromSql($"select * from Books").ToListAsync();
-            //var books = await appDbContext.Books.FromSql($"select * from Books where {ColumnName} = {ColumnValue}").ToListAsync();
-            //var books = await appDbContext.Books.FromSql($"select * from Books where NoOfPages = {ColumnValue}").ToListAsync();
-            //var books = await appDbContext.Books.FromSql($"select * from Books").Where(x=>x.NoOfPages == 120).ToListAsync();
+            ////var books = await appDbContext.Books.FromSql($"select * from Books").ToListAsync();
+            ////var books = await appDbContext.Books.FromSql($"select * from Books where {ColumnName} = {ColumnValue}").ToListAsync();
+            ////var books = await appDbContext.Books.FromSql($"select * from Books where NoOfPages = {ColumnValue}").ToListAsync();
+            ////var books = await appDbContext.Books.FromSql($"select * from Books").Where(x=>x.NoOfPages == 120).ToListAsync();
 
-            var books = await appDbContext.Books.FromSqlRaw($"select * from Books where {ColumnName} = @columnvalue", parameter).ToListAsync();
+            //var books = await appDbContext.Books.FromSqlRaw($"select * from Books where {ColumnName} = @columnvalue", parameter).ToListAsync();
+
+
+            // Using Stored procedures
+            //var books = await appDbContext.Books.FromSql($"EXEC GetBooks").ToListAsync();
+            //var books = await appDbContext.Books.FromSql($"EXEC GetBooksById 2").ToListAsync();
+            var id = 2;
+            var parameter = new SqlParameter("@Id", id);
+            var books = await appDbContext.Books.FromSql($"EXEC GetBooksById {parameter}").ToListAsync();
+            
             return Ok(books);
         }
     }
